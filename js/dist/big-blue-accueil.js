@@ -1,5 +1,5 @@
 /**
-* @source: github bigbluearms
+* @source: https://github.com/BigBlueArms/BigBlueSite
 *
 * @licstart  The following is the entire license notice for the
 *  JavaScript code in this page.
