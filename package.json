@@ -1,0 +1,14 @@
+{
+  "name": "big-blue-arms-js",
+  "version": "1.0.0",
+  "description": "Big Blue Arms Website Js Source Code (https://bigbluearms.com)",
+  "author": "",
+  "license": "WTFPL",
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "babel-preset-minify": "^0.5.0",
+    "uglify-js": "^3.4.9"
+  }
+}
