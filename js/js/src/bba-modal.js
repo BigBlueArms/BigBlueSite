@@ -2,32 +2,35 @@ var BigBlueModal = {
     modals: {},
 
     configPrez : {
-            background : "/images/prez-full-container.svg",
-            closeClass : "bba-modal-close prez",
-            /*
-              Content margin and height in percent
-              Adapt it to your modal's background
-            */
-            top : 7,
-            left : 10,
-            right : 7,
-            height : 63,
+        background : "/images/prez-full-container.svg",
+        closeClass : "bba-modal-close prez",
+        /*
+        Content margin and height in percent
+        Adapt it to your modal's background
+        */
+        top : 7,
+        left : 10,
+        right : 7,
+        height : 63,
 
     },
     configTeam : {
-            background : "/images/team-modal.svg",
-            closeClass : "bba-modal-close team",
-            top : 23,
-            left : 20,
-            right : 36,
-            height : 37,
+        background : "/images/team-modal.svg",
+        closeClass : "bba-modal-close team",
+        top : 23,
+        left : 20,
+        right : 36,
+        height : 37,
 
     },
-    createModal(contentId, config, assetPath = BigBlueApp.assetsUrl){
+    createModal(contentId, config, configSmall= null, assetPath = BigBlueApp.assetsUrl){
         if(!BigBlueModal.modals[contentId]){
             const modalBackground = document.createElement("div");
             modalBackground.classList.add("bba-modal-container");
-
+            modalBackground.style.top = `${window.scrollY}px`;
+            if(window.innerWidth <700 && configSmall){
+                config = configSmall;
+            }
             const modal = document.createElement("div");
             modal.classList.add("bba-modal");
             modal.classList.add("hidden");
@@ -36,6 +39,7 @@ var BigBlueModal = {
             },0);
 
             modal.style.backgroundImage = `url("${assetPath}${config.background}")`;
+            modal.style.top = `calc(${window.innerHeight/2}px + ${window.scrollY}px)`;
 
             //Close button
             const closeButton = document.createElement("div");
@@ -49,9 +53,9 @@ var BigBlueModal = {
             modalBackground.onpointerdown = ()=>{
                 BigBlueModal.hideModal(contentId);
             }
-            window.addEventListener("scroll", (event)=>{
+            /*window.addEventListener("scroll", (event)=>{
                 BigBlueModal.hideModal(contentId);
-            });
+            });*/
             window.addEventListener("keydown", (event)=>{
                 if(event.key==="Escape"){
                     BigBlueModal.hideModal(contentId);
@@ -71,9 +75,13 @@ var BigBlueModal = {
             const modalContent = document.createElement("div");
             modalContent.classList.add("bba-modal-content");
             modalContent.innerHTML = document.getElementById(contentId).innerHTML;
+            const iframe = modalContent.getElementsByTagName("iframe")[0];
+            if(iframe){
+                iframe.setAttribute("src",iframe.getAttribute("src")+"?autoplay=1");
+            }
             modal.appendChild(spaceTop);
             modal.appendChild(scroll);
-                scroll.appendChild(modalContent);
+            scroll.appendChild(modalContent);
 
             document.body.appendChild(modalBackground);
             document.body.appendChild(modal);

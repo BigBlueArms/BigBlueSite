@@ -10,6 +10,14 @@ jQuery(function() {
     let lastScrollTime = 0;
     let timeoutHeaderAppear = null;
 
+    function showPrez(){
+        let toAppear = document.getElementsByClassName("bba-prez-to-appear");
+        for(let i = 0;i<toAppear.length;i++){
+            const prez= toAppear[i];
+            prez.style.opacity = 1;
+        }
+    }
+
     function updatePrezSize(){
         headerHeight = domHeader.offsetHeight;
         height = window.innerHeight - domHeader.offsetHeight;
@@ -22,16 +30,43 @@ jQuery(function() {
             if(i>0){
                 prez.prev = domPrezs[i-1];
             }
-            prez.style.height = height+"px";
-            prez.computedHeight = height;
+            //if(tilesCont.length>0){
+                prez.isTile = true;
+                let offset = headerHeight;
+                if(i===0){
+                    console.log("1st prez computed height",prez.clientHeight);
+                }
+                console.log("height",height);
+                prez.style.height = "auto";
+                setTimeout(()=>{
+                    let h;
+                    let prezLeft = prez.getElementsByClassName("bba-prez-left")[0];
+                    if(prezLeft){
+                         h = Math.max(prezLeft.clientHeight,height);
+                    }
+                    else{
+                        h = Math.max(prez.clientHeight+offset,height);
+                    }
+                    prez.style.height = h +"px";// tileCont.offsetHeight+"px";
+                    prez.computedHeight = h;// tileCont.offsetHeight;
+                },50);
+            /*}
+            else{
+                prez.style.height = height+"px";
+                prez.computedHeight = height;
+            }*/
         }
     }
 
-
     function initPrez(){
         updatePrezSize();
-        startListening();
+        showPrez();
+
         window.onresize = updatePrezSize;
+        setTimeout(()=>{
+            updatePrezSize();
+            startListening();
+        },2000);
     }
 
     function startListening(){
@@ -43,23 +78,31 @@ jQuery(function() {
                 scrollPos = false;
             }
             for(let i = 0; i <domPrezs.length;i++){
+
                 const prez = domPrezs[i];
                 const rect = prez.getBoundingClientRect();
                 if(scrollPos
                     &&prez.next
-                    &&rect.top<-prez.computedHeight/10 +headerHeight
-                    &&rect.top>-1*prez.computedHeight
+                    &&rect.bottom<height
+                    &&rect.top>-prez.computedHeight
                     && dt > minScrollDelay
                 ){
+                    console.log("UP");
+                    console.log("bottom",rect.bottom);
+                    console.log("top",rect.top);
                         scrollToPrez(prez.next);
                         break;
                 }
                 else if(!scrollPos
                         &&prez.prev
-                        &&rect.top>prez.computedHeight/10 +headerHeight
-                        &&rect.top<prez.computedHeight*1.1
+                        &&rect.top>headerHeight +50
+                        &&rect.top<prez.computedHeight*0.5
                         && dt > minScrollDelay
                 ){
+                    console.log("BOT");
+
+                    console.log("bottom",rect.bottom);
+                    console.log("top",rect.top);
                         scrollToPrez(prez.prev);
                         break;
                 }

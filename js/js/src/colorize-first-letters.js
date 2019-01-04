@@ -1,3 +1,4 @@
+"use strict"
 var ColorFirstLetters = {
     colorizeWordsFirstLetterByClass(className, color){
         const elems = document.getElementsByClassName(className);
@@ -16,7 +17,7 @@ var ColorFirstLetters = {
     */
     colorizeWordsFirstLetter(string, color, splitChar = " "){
         string = string.trim();
-        stringArray = string.split(splitChar);
+        let stringArray = string.split(splitChar);
         for(let i = 0;i < stringArray.length;i++){
             const str = stringArray[i];
             stringArray[i] = `<span style = "color:${color}">${str.charAt(0)}</span>${str.substring(1)}`;

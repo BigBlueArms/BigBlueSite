@@ -1,8 +1,12 @@
 // This object is exported to less => keep it simple
-var BbaColors = {
+var BigBlueColors = {
     blue1 : "#2361a7",
     blue2 : "#11293b",
-    blueCounr :2,
+    blue3 : "#2497d4",
+    blue4 : "#13344f",
+    blue5 : "#a0c6e8", //realy light
+    blue6 : "#010202", //black
+    blueCount :2,
 
     color1 : "#2361a7", //blue
     color2 : "#8fc156", //green
@@ -16,7 +20,7 @@ var BbaColors = {
     colorCount : 9
 };
 try{
-    module.exports = BbaColors;
+    module.exports = BigBlueColors;
 }
 catch(e){
 
