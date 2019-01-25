@@ -18,16 +18,18 @@ function bigblueload() {
 
     function initLogo() {
         logoDom = document.createElement("img");
-        logoDom.src = BigBlueApp.assetsUrl + '/images/logo-no-arms.png';
+        logoDom.src = BigBlueApp.assetsUrl + '/images/logo-no-arms.svg';
         logoDom.classList.add("bigblue-logo");
 
         armIdleDom = document.createElement("img");
-        armIdleDom.src = BigBlueApp.assetsUrl + '/images/arm.png';
+        armIdleDom.src = BigBlueApp.assetsUrl + '/images/arm.svg';
         armIdleDom.classList.add("bigblue-logo");
 
         shoulderDom = document.createElement("img");
-        shoulderDom.src = BigBlueApp.assetsUrl + '/images/shoulder.png';
+        shoulderDom.src = BigBlueApp.assetsUrl + '/images/shoulder.svg';
         shoulderDom.classList.add("bigblue-shoulder");
+        shoulderDom.style.visibility = "hidden";
+
 
         container.appendChild(logoDom);
         container.appendChild(armIdleDom);
@@ -62,14 +64,14 @@ function bigblueload() {
     */
     function initArm() {
         armDom = document.createElement("img");
-        armDom.src = BigBlueApp.assetsUrl + '/images/arm-part.png';
+        armDom.src = BigBlueApp.assetsUrl + '/images/arm-part.svg';
         armDom.classList.add("bigblue-logo");
         armDom.style.visibility = "hidden";
         armDom.style.zIndex = 9;
         container.appendChild(armDom);
 
         fistDom = document.createElement("img");
-        fistDom.src = BigBlueApp.assetsUrl + '/images/fist.png';
+        fistDom.src = BigBlueApp.assetsUrl + '/images/fist.svg';
         fistDom.classList.add("bigblue-logo");
         fistDom.style.visibility = "hidden";
         fistDom.style.zIndex = 10;
@@ -85,12 +87,14 @@ function bigblueload() {
         let armHeight = logoWidth * 0.13;
         let fistWidth = logoWidth * 0.08;
         let fistHeight = logoWidth * 0.08;
+        const fistOffsetY = logoWidth*0.01;
+        const fistOffsetX = -logoWidth*0.01;
         armDom.style.height =armHeight+"px";
         armDom.style.width = armWidth+"px";
         fistDom.style.height = fistHeight+"px";
         fistDom.style.width = fistWidth+"px";
 
-        var shoulderLeft = docW / 2 + logoWidth * 0.17;
+        var shoulderLeft = docW / 2 + logoWidth * 0.19;
         var shoulderTop = docH / 2 - logoWidth * 0.08;
         debugDiv(shoulderLeft,shoulderTop);
 
@@ -102,7 +106,7 @@ function bigblueload() {
         armDom.style.left = (shoulderLeft -armWidth/2)+ "px";
         armDom.style.top =(shoulderTop -armHeight/2)+ "px";
         fistDom.style.left = (shoulderLeft - fistWidth/2)+ "px";
-        fistDom.style.top = (shoulderTop - fistHeight/2)+ "px";
+        fistDom.style.top = (shoulderTop - fistHeight/2 )+ "px";
 
         if (menuHover) {
             /*
@@ -116,7 +120,7 @@ function bigblueload() {
             let dist = 1* Math.sqrt(dx * dx + dy * dy);
             var angle = Math.atan2(dy, dx);
 
-            let originX =  armWidth*0.1;
+            let originX =  armWidth*0.06;
 
             //The scale depends of the space left for the fist and of the transform origin
             let scaleArm = (dist - fistWidth)/(armWidth -originX);
@@ -124,7 +128,7 @@ function bigblueload() {
             armDom.style.transform = `translate(${armWidth/2- originX}px,0px) rotate(${angle}rad) scaleX(${scaleArm})`;
 
             fistDom.style.transformOrigin = `center center`;
-            fistDom.style.transform  = `rotate(${angle}rad) translate(${dist-fistHeight/2}px,0px) rotate(90deg)`;
+            fistDom.style.transform  = `rotate(${angle}rad) translate(${fistOffsetX+dist-fistHeight/2}px,${fistOffsetY}px) rotate(90deg)`;
         }
 
     }
@@ -302,6 +306,7 @@ function bigblueload() {
                 if (!armShown) {
                     menuHover = dom.data;
                     armIdleDom.style.visibility = "hidden";
+                    shoulderDom.style.visibility = "visible";
                     if(dom.data.bubble){
                     }
                     updateArmPosition();

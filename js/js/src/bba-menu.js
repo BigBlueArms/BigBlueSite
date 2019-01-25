@@ -34,12 +34,10 @@ jQuery(function() {
         };
 
         logoDom.onclick = (e) => {
-            console.log("event type",e.type);
             document.location = BigBlueApp.siteUrl;
         };
 
         logoDom.ondblclick= (e) => {
-            console.log("event type",e.type);
             document.location = BigBlueApp.siteUrl;
         };
 

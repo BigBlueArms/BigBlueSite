@@ -1,3 +1,9 @@
+var BigBluePrez = {
+    scrollToPrezIndex(prezIndex){
+        window.dispatchEvent( new CustomEvent('bba-scroll-prez', { 'detail': prezIndex } ));
+    }
+}
+
 jQuery(function() {
     const minScrollDelay = 800;
     const domPrezs  = document.querySelectorAll(".bba-prez");
@@ -8,7 +14,6 @@ jQuery(function() {
 
     let oldScroll = 0;
     let lastScrollTime = 0;
-    let timeoutHeaderAppear = null;
 
     function showPrez(){
         let toAppear = document.getElementsByClassName("bba-prez-to-appear");
@@ -23,53 +28,79 @@ jQuery(function() {
         height = window.innerHeight - domHeader.offsetHeight;
         for(let i = 0;i<domPrezs.length;i++){
             const prez= domPrezs[i];
-            let next = null;
             if(i<domPrezs.length-1){
                 prez.next = domPrezs[i+1];
             }
             if(i>0){
                 prez.prev = domPrezs[i-1];
             }
-            //if(tilesCont.length>0){
-                prez.isTile = true;
-                let offset = headerHeight;
-                if(i===0){
-                    console.log("1st prez computed height",prez.clientHeight);
+            prez.isTile = true;
+            let offset = headerHeight;vzml
+
+
+
+
+
+
+
+
+
+
+
+             
+            prez.style.height = "auto";
+            setTimeout(()=>{
+                let h;
+                let prezLeft = prez.getElementsByClassName("bba-prez-left")[0];
+                if(prezLeft){
+                    h = Math.max(prezLeft.clientHeight,height);
                 }
-                console.log("height",height);
-                prez.style.height = "auto";
-                setTimeout(()=>{
-                    let h;
-                    let prezLeft = prez.getElementsByClassName("bba-prez-left")[0];
-                    if(prezLeft){
-                         h = Math.max(prezLeft.clientHeight,height);
-                    }
-                    else{
-                        h = Math.max(prez.clientHeight+offset,height);
-                    }
-                    prez.style.height = h +"px";// tileCont.offsetHeight+"px";
-                    prez.computedHeight = h;// tileCont.offsetHeight;
-                },50);
-            /*}
-            else{
-                prez.style.height = height+"px";
-                prez.computedHeight = height;
-            }*/
+                else{
+                    h = Math.max(prez.clientHeight+offset,height);
+                }
+                prez.style.height = h +"px";// tileCont.offsetHeight+"px";
+                prez.computedHeight = h;// tileCont.offsetHeight;
+            },50);
+
         }
     }
 
     function initPrez(){
-        updatePrezSize();
-        showPrez();
-
-        window.onresize = updatePrezSize;
-        setTimeout(()=>{
+        if(!BigBlueApp.isTouch){
             updatePrezSize();
             startListening();
-        },2000);
+            window.onresize = updatePrezSize;
+        }
+        else{
+            initTouchPrez();
+            updatePrezSize();
+        }
+
+        window.addEventListener("bba-scroll-prez",(event)=>{
+            scrollToPrez(domPrezs[event.detail]);
+        })
+
+        setTimeout(()=>{
+            showPrez();
+        },1000);
+    }
+
+    function initTouchPrez(){
+        const splits = document.getElementsByClassName("bba-prez-splitter");
+        for(let i = 0; i< splits.length;i++){
+            const split = splits[i];
+            split.classList.add("bba-touch")
+        }
+        domHeader.classList.add("bba-touch-header");
+        const socials =  document.getElementsByClassName("bba-social")[0];
+        socials.style.top = "25px";
+        const prezRight = document.getElementsByClassName("bba-prez-right")[0];
+        prezRight.classList.add("bba-touch");
+
     }
 
     function startListening(){
+
         window.addEventListener("scroll", (event)=>{
             let dt = Date.now()- lastScrollTime;
             updateCurrentPrez(dt);
@@ -78,7 +109,6 @@ jQuery(function() {
                 scrollPos = false;
             }
             for(let i = 0; i <domPrezs.length;i++){
-
                 const prez = domPrezs[i];
                 const rect = prez.getBoundingClientRect();
                 if(scrollPos
@@ -87,24 +117,18 @@ jQuery(function() {
                     &&rect.top>-prez.computedHeight
                     && dt > minScrollDelay
                 ){
-                    console.log("UP");
-                    console.log("bottom",rect.bottom);
-                    console.log("top",rect.top);
-                        scrollToPrez(prez.next);
-                        break;
+                    scrollToPrez(prez.next);
+                    break;
                 }
                 else if(!scrollPos
-                        &&prez.prev
-                        &&rect.top>headerHeight +50
-                        &&rect.top<prez.computedHeight*0.5
-                        && dt > minScrollDelay
+                    &&prez.prev
+                    &&rect.top>headerHeight +50
+                    &&rect.top<prez.computedHeight*0.5
+                    && dt > minScrollDelay
                 ){
-                    console.log("BOT");
 
-                    console.log("bottom",rect.bottom);
-                    console.log("top",rect.top);
-                        scrollToPrez(prez.prev);
-                        break;
+                    scrollToPrez(prez.prev);
+                    break;
                 }
             };
             oldScroll = window.scrollY;
@@ -118,35 +142,33 @@ jQuery(function() {
         return false;
     }
 
-    function putHeaderAtPresPos(prezRect){
-        const scY = prezRect.top+window.scrollY-headerHeight;
-        if(domHeader.style.top !== scY+"px"){
+    function putHeaderAtPresPos(prez,prezRect){
+        let scY = prezRect.top+window.scrollY-headerHeight;
+        if(domHeader.style.top !== Math.round(scY)+"px"){
             domHeader.style.opacity = 0;
             setTimeout(()=>{
+                let prezRect = prez.getBoundingClientRect();
+                scY = prezRect.top+window.scrollY-headerHeight
                 domHeader.style.top = scY+"px";
-                domHeader.style.opacity = 1;
             },300);
+            setTimeout(()=>{
+                domHeader.style.opacity = 1;
+            },
+            500);
+
         }
     }
 
     function updateCurrentPrez(dt){
-        clearTimeout(timeoutHeaderAppear);
-        timeoutHeaderAppear = setTimeout(()=>{
-            let delay = dt - minScrollDelay;
-            if(delay>0) {
-                for(let i = 0; i <domPrezs.length;i++){
-                    const prez = domPrezs[i];
-                    const prezRect = prez.getBoundingClientRect();
-                    if(isCurrentPrez(prezRect)){
-                        putHeaderAtPresPos(prezRect);
-                        break;
-                    }
-                }
+
+        for(let i = 0; i <domPrezs.length;i++){
+            const prez = domPrezs[i];
+            const prezRect = prez.getBoundingClientRect();
+            if(isCurrentPrez(prezRect)){
+                putHeaderAtPresPos(prez,prezRect);
+                break;
             }
-            else{
-                setTimeout(()=>updateCurrentPrez(1000000000),Math.max(-delay-200,0));
-            }
-        },200);
+        }
     }
 
     function scrollToPrez(prez){
@@ -155,7 +177,13 @@ jQuery(function() {
             window.scroll(window.scrollX,scY);
             oldScroll = window.scrollY;
         },100);
-        putHeaderAtPresPos(prez.getBoundingClientRect());
+
+        if(!BigBlueApp.isTouch){
+            setTimeout(()=>{
+                putHeaderAtPresPos(prez,prez.getBoundingClientRect());
+            },500);
+        }
+
         lastScrollTime = Date.now();
     }
 

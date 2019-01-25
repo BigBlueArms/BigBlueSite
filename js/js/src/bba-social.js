@@ -1,15 +1,23 @@
 const BBASocialInfos = [
     {
+        faClasses : ["bba-icon-felinn"],
+        url : "https://tube.felinn.org/accounts/bigbluearms/",
+        color : "#55acee",
+    },
+    {
         faClasses : ["fab","fa-twitter"],
-        url : "https://twitter.com/bigbluearms"
+        url : "https://twitter.com/bigbluearms",
+        color : "#55acee",
     },
     {
         faClasses : ["fab","fa-facebook-f"],
-        url : "https://www.facebook.com/bigbluearms"
+        url : "https://www.facebook.com/bigbluearms",
+        color : "#3b5999"
     },
     {
         faClasses : ["fab","fa-youtube"],
-        url : "https://www.youtube.com/channel/UCmcNxsoycWKv7jMsHkEEmMw"
+        url : "https://www.youtube.com/channel/UCmcNxsoycWKv7jMsHkEEmMw",
+        color : "#cd201f"
     },
 
 ];
@@ -26,6 +34,7 @@ jQuery(function(){
         data.faClasses.forEach((cl)=>{
             icon.classList.add(cl);
         });
+        icon.style.color = data.color;
         round.appendChild(icon)
         link.appendChild(round);
         socContainer.appendChild(link);
