@@ -35,19 +35,7 @@ jQuery(function() {
                 prez.prev = domPrezs[i-1];
             }
             prez.isTile = true;
-            let offset = headerHeight;vzml
-
-
-
-
-
-
-
-
-
-
-
-             
+            let offset = headerHeight;
             prez.style.height = "auto";
             setTimeout(()=>{
                 let h;

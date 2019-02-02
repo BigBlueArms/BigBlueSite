@@ -23,23 +23,44 @@ var BigBlueModal = {
         height : 37,
 
     },
-    createModal(contentId, config, configSmall= null, assetPath = BigBlueApp.assetsUrl){
+
+    configGallery: {
+        background : null,
+        closeClass : "bba-modal-close gallery",
+        modalClass : "bba-modal gallery",
+        top : 5 ,
+        left : 2,
+        right : 2,
+        height : 90,
+    },
+
+    createModal(contentId, config, options = {}){
+
+        const configSmall= options.configSmall ||null;
+        const assetPath = options.assetPath || BigBlueApp.assetsUrl;
         if(!BigBlueModal.modals[contentId]){
+            const htmlContent = options.htmlContent || document.getElementById(contentId).innerHTML;
+
             const modalBackground = document.createElement("div");
             modalBackground.classList.add("bba-modal-container");
-            modalBackground.style.top = `${window.scrollY}px`;
             if(window.innerWidth <700 && configSmall){
                 config = configSmall;
             }
             const modal = document.createElement("div");
-            modal.classList.add("bba-modal");
+            if(config.modalClass){
+                    modal.className =config.modalClass;
+            }
+            else{
+                modal.classList.add("bba-modal");
+            }
             modal.classList.add("hidden");
             setTimeout(()=>{
                 modal.classList.remove("hidden");
             },0);
-
-            modal.style.backgroundImage = `url("${assetPath}${config.background}")`;
-            modal.style.top = `calc(${window.innerHeight/2}px + ${window.scrollY}px)`;
+            if(config.background){
+                modal.style.backgroundImage = `url("${assetPath}${config.background}")`;
+            }
+            //modal.style.top = `calc(${window.innerHeight/2}px + ${window.scrollY}px)`;
 
             //Close button
             const closeButton = document.createElement("div");
@@ -74,7 +95,7 @@ var BigBlueModal = {
 
             const modalContent = document.createElement("div");
             modalContent.classList.add("bba-modal-content");
-            modalContent.innerHTML = document.getElementById(contentId).innerHTML;
+            modalContent.innerHTML = htmlContent;
             const iframe = modalContent.getElementsByTagName("iframe")[0];
             if(iframe){
                 iframe.setAttribute("src",iframe.getAttribute("src")+"?autoplay=1");
